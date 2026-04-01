@@ -1,9 +1,7 @@
-// app.js - Fixed version with token validation
+// app.js - Ventura Logistics Scanner
+// Основан на рабочей версии, добавлены новые функции
 
 const debugConsole = document.getElementById('debug-console');
-const toggleDebug = document.getElementById('toggle-debug');
-
-const protocolStatus = document.getElementById('protocol-status');
 const activationPanel = document.getElementById('activation-panel');
 const mainPanel = document.getElementById('main-panel');
 const activateBtn = document.getElementById('activate-btn');
@@ -12,58 +10,57 @@ const readerDiv = document.getElementById('reader');
 const resultBox = document.getElementById('result-box');
 const resultSpan = document.getElementById('scanned-result');
 const scanCountSpan = document.getElementById('scan-count');
+const saveBtn = document.getElementById('save-btn');
+const cancelBtn = document.getElementById('cancel-btn');
+const actionButtons = document.getElementById('action-buttons');
 
 let html5QrCode = null;
+let pendingCode = null;
 let appState = {
     authenticated: false,
     deviceId: null,
     token: null,
     isScanning: false,
-    scanCount: 0
+    scanCount: 0,
+    awaitingDecision: false
 };
 
-// Helper function to get translated text
+// Helper functions
 function t(key, params = {}) {
     return i18n.t(key, params);
 }
 
-// Update UI with current language
-function updateUILanguage() {
-    i18n.updateDOM();
-    
-    if (appState.scanCount > 0) {
-        scanCountSpan.innerText = t('result.scan_count', { count: appState.scanCount });
-    } else {
-        scanCountSpan.innerText = '';
-    }
-}
-
-// Logging with i18n support
+// Debug logging
+let debugEnabled = false;
 function log(msg, isError = false) {
-    if (!toggleDebug.checked) return;
+    if (!debugEnabled) return;
     const time = new Date().toLocaleTimeString();
-    const color = isError ? '#ff4d4f' : '#00ff9c';
-    debugConsole.innerHTML += `<div style="color:${color}">[${time}] ${msg}</div>`;
+    const color = isError ? '#ff6b6b' : '#86efac';
+    debugConsole.innerHTML += `<div style="color:${color};">[${time}] ${msg}</div>`;
     debugConsole.scrollTop = debugConsole.scrollHeight;
     console.log(msg);
 }
 
-// Check HTTPS
-if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
-    protocolStatus.innerText = t('connection_insecure');
-    protocolStatus.style.color = "red";
-    log("Error: HTTPS required", true);
-} else {
-    protocolStatus.innerText = t('connection_secure');
-    protocolStatus.style.color = "green";
+// Enable debug mode (long press on header)
+let debugTriggerTimer = null;
+const headerElement = document.querySelector('.card-header');
+if (headerElement) {
+    headerElement.addEventListener('touchstart', () => {
+        debugTriggerTimer = setTimeout(() => {
+            debugEnabled = !debugEnabled;
+            const debugSection = document.querySelector('.debug-section');
+            if (debugSection) debugSection.style.display = debugEnabled ? 'block' : 'none';
+            if (debugEnabled) log("Debug mode enabled");
+        }, 3000);
+    });
+    headerElement.addEventListener('touchend', () => {
+        if (debugTriggerTimer) clearTimeout(debugTriggerTimer);
+    });
 }
 
-/**
- * Verify token with server
- */
+// API Functions
 async function verifyToken(deviceId, token) {
-    log("Verifying token with server...");
-    
+    log("Verifying token...");
     const formData = new FormData();
     formData.append('device_id', deviceId);
     formData.append('token', token);
@@ -73,50 +70,16 @@ async function verifyToken(deviceId, token) {
             method: 'POST',
             body: formData
         });
-        
         const result = await response.json();
-        
-        if (response.ok && result.valid === true) {
-            log("✅ Token is valid");
-            return true;
-        } else {
-            log("❌ Token is invalid: " + (result.message || "Unknown error"), true);
-            return false;
-        }
+        return response.ok && result.valid === true;
     } catch (err) {
-        log("❌ Token verification failed: " + err.message, true);
+        log("Verify error: " + err.message, true);
         return false;
     }
 }
 
-/**
- * Clear authentication and show activation UI
- */
-function clearAuthAndShowActivation() {
-    log("Clearing authentication...");
-    
-    // Clear local state
-    appState.authenticated = false;
-    appState.deviceId = null;
-    appState.token = null;
-    appState.scanCount = 0;
-    
-    // Clear localStorage
-    localStorage.removeItem('scan_auth');
-    
-    // Stop scanner if running
-    if (html5QrCode && html5QrCode.isScanning) {
-        stopScanner();
-    }
-    
-    // Show activation UI
-    showActivationUI();
-}
-
-// Save to database
 async function saveToDatabase(code, deviceId, token) {
     log("Saving code: " + code);
-    
     const formData = new FormData();
     formData.append('code', code);
     formData.append('device_id', deviceId);
@@ -129,55 +92,33 @@ async function saveToDatabase(code, deviceId, token) {
         });
         
         if (response.ok) {
-            const result = await response.json();
-            log("✅ Saved: " + result.message);
+            log("✅ Saved successfully");
+            return true;
         } else if (response.status === 401) {
-            log("❌ Session expired or invalid", true);
+            log("Session expired", true);
             clearAuthAndShowActivation();
             alert(t('errors.session_expired'));
-        } else {
-            const errorText = await response.text();
-            log("❌ Save error: " + response.status, true);
+            return false;
         }
+        return false;
     } catch (err) {
-        log("❌ Network error: " + err.message, true);
+        log("Save error: " + err.message, true);
+        return false;
     }
 }
 
-// Activate device
-// Activate device with debug
 async function activateDevice(qrCode) {
-    log("🔐 Activating device...");
-    log("📤 Sending QR code: " + qrCode);
-    
+    log("🔐 Activating device with code: " + qrCode);
     const formData = new FormData();
     formData.append('code', qrCode);
     
-    // Log FormData contents (for debugging)
-    for (let pair of formData.entries()) {
-        log(`   FormData: ${pair[0]} = ${pair[1]}`);
-    }
-    
     try {
-         const response = await fetch('scanner/api/device_activate.php', {
+        const response = await fetch('scanner/api/device_activate.php', {
             method: 'POST',
             body: formData
         });
         
-        log(`📡 Response status: ${response.status}`);
-        
-        // Get raw response first
-        const textResponse = await response.text();
-        log(`📝 Raw response: ${textResponse}`);
-        
-        // Parse JSON
-        let result;
-        try {
-            result = JSON.parse(textResponse);
-        } catch (e) {
-            log(`❌ Failed to parse JSON: ${e.message}`, true);
-            throw new Error(`Server returned invalid response: ${textResponse.substring(0, 100)}`);
-        }
+        const result = await response.json();
         
         if (response.ok && result.status === 'success') {
             appState.authenticated = true;
@@ -191,30 +132,46 @@ async function activateDevice(qrCode) {
                 timestamp: Date.now()
             }));
             
-            log("✅ Activation successful! Device ID: " + result.device_id);
+            log("✅ Activation successful!");
             showMainScannerUI();
             alert(t('messages.activation_success'));
+            return true;
         } else {
-            throw new Error(result.message || "Activation error ZERO");
+            throw new Error(result.message || "Activation failed");
         }
     } catch (err) {
-        log("❌ Activation error ALPHA: " + err.message, true);
+        log("❌ Activation error: " + err.message, true);
         alert(t('errors.activation_error', { error: err.message }));
-        throw err;
+        return false;
     }
 }
 
-// Show activation UI
+// UI Functions
+function clearAuthAndShowActivation() {
+    appState.authenticated = false;
+    appState.deviceId = null;
+    appState.token = null;
+    appState.scanCount = 0;
+    appState.awaitingDecision = false;
+    pendingCode = null;
+    
+    localStorage.removeItem('scan_auth');
+    
+    if (html5QrCode && html5QrCode.isScanning) {
+        stopScanner();
+    }
+    
+    showActivationUI();
+}
+
 function showActivationUI() {
     log("📱 Activation mode");
-    appState.authenticated = false;
-    activationPanel.style.display = 'flex';
+    activationPanel.style.display = 'block';
     mainPanel.style.display = 'none';
     resultBox.style.display = 'none';
     readerDiv.style.display = 'none';
 }
 
-// Show main scanner UI
 function showMainScannerUI() {
     log("📷 Scanning mode");
     activationPanel.style.display = 'none';
@@ -226,13 +183,28 @@ function showMainScannerUI() {
 
 function updateScanCount() {
     if (appState.scanCount > 0) {
-        scanCountSpan.innerText = t('result.scan_count', { count: appState.scanCount });
+        scanCountSpan.innerText = t('result_scan_count', { count: appState.scanCount });
     } else {
         scanCountSpan.innerText = '';
     }
 }
 
-// Start scanning
+function showScannedCode(code) {
+    pendingCode = code;
+    appState.awaitingDecision = true;
+    
+    resultSpan.innerText = code;
+    resultBox.style.display = 'block';
+    actionButtons.style.display = 'flex';
+    startBtn.style.display = 'none';
+    
+    // Останавливаем сканер
+    if (html5QrCode && html5QrCode.isScanning) {
+        stopScanner();
+    }
+}
+
+// Start scanning - КОПИРУЕМ ЛОГИКУ ИЗ РАБОЧЕЙ ВЕРСИИ
 async function startScanning(onSuccess, button, context) {
     log(`🚀 Starting scanner (${context})`);
     
@@ -242,6 +214,7 @@ async function startScanning(onSuccess, button, context) {
     }
     
     try {
+        // КЛЮЧЕВОЙ МОМЕНТ: скрываем кнопку и показываем reader
         button.style.display = 'none';
         readerDiv.style.display = 'block';
         resultBox.style.display = 'none';
@@ -258,26 +231,32 @@ async function startScanning(onSuccess, button, context) {
                 log(`${context === "activation" ? "Activation QR" : "Code"} scanned: ${decodedText}`);
                 
                 try {
-                    await onSuccess(decodedText);
-                    
-                    if (context === "scanning") {
-                        appState.scanCount++;
-                        updateScanCount();
+                    // Для активации - сразу обрабатываем и останавливаем
+                    if (context === "activation") {
+                        await onSuccess(decodedText);
+                        await stopScanner();
+                        showMainScannerUI();
+                        return;
                     }
                     
+                    // Для сканирования - показываем UI выбора
                     if (context === "scanning") {
-                        resultSpan.innerText = decodedText;
-                        resultBox.style.display = 'block';
-                        setTimeout(() => {
-                            if (resultBox.style.display === 'block') {
-                                resultBox.style.display = 'none';
-                            }
-                        }, 3000);
+                        await stopScanner();
+                        showScannedCode(decodedText);
+                        // Сохраняем колбэк для сохранения
+                        window._pendingSaveCallback = async () => {
+                            await onSuccess(decodedText);
+                            appState.scanCount++;
+                            updateScanCount();
+                        };
                     }
                     
                 } catch (err) {
                     log(`❌ Processing error: ${err.message}`, true);
                     alert(t('errors.scan_error', { error: err.message }));
+                    // Возвращаем кнопку при ошибке
+                    button.style.display = 'block';
+                    readerDiv.style.display = 'none';
                 }
             },
             () => {
@@ -286,14 +265,6 @@ async function startScanning(onSuccess, button, context) {
         );
         
         log(`🎥 Camera active (${context})`);
-        
-        if (context === "activation") {
-            setTimeout(() => {
-                if (readerDiv.style.display === 'block') {
-                    log("⏳ Waiting for activation QR code...");
-                }
-            }, 1000);
-        }
         
     } catch (err) {
         log(`❌ Camera error: ${err.message}`, true);
@@ -321,13 +292,52 @@ async function stopScanner() {
     readerDiv.style.display = 'none';
 }
 
+// Save handler
+async function handleSave() {
+    if (!pendingCode) return;
+    
+    saveBtn.disabled = true;
+    saveBtn.innerText = t('saving_btn');
+    
+    const success = await saveToDatabase(pendingCode, appState.deviceId, appState.token);
+    
+    if (success) {
+        appState.scanCount++;
+        updateScanCount();
+        log("✅ Code saved");
+        
+        pendingCode = null;
+        appState.awaitingDecision = false;
+        resultBox.style.display = 'none';
+        actionButtons.style.display = 'none';
+        
+        startBtn.style.display = 'block';
+        startBtn.innerText = t('scan_next_btn');
+    } else {
+        alert(t('errors.save_error'));
+    }
+    
+    saveBtn.disabled = false;
+    saveBtn.innerText = t('save_btn');
+}
+
+function handleCancel() {
+    log("❌ Code discarded");
+    pendingCode = null;
+    appState.awaitingDecision = false;
+    resultBox.style.display = 'none';
+    actionButtons.style.display = 'none';
+    
+    startBtn.style.display = 'block';
+    startBtn.innerText = t('scan_next_btn');
+}
+
 // Event listeners
 activateBtn.addEventListener('click', async () => {
+    log("=== ACTIVATE BUTTON CLICKED ===");
     await startScanning(
         async (code) => {
             await activateDevice(code);
-            await stopScanner();
-            showMainScannerUI();
         },
         activateBtn,
         "activation"
@@ -340,109 +350,131 @@ startBtn.addEventListener('click', async () => {
         return;
     }
     
-    startBtn.innerText = t('scanner_panel.scanning_button');
+    if (appState.awaitingDecision) {
+        log("Waiting for decision on current code");
+        return;
+    }
+    
+    startBtn.innerText = t('scanning_btn');
     
     await startScanning(
         async (code) => {
-            await saveToDatabase(code, appState.deviceId, appState.token);
+            // Этот колбэк будет вызван после нажатия Save
+            // Сохраняем в глобальной переменной
+            window._pendingSaveCallback = async () => {
+                await saveToDatabase(code, appState.deviceId, appState.token);
+            };
         },
         startBtn,
         "scanning"
     );
     
+    // Восстанавливаем текст кнопки если сканер не запустился
     setTimeout(() => {
-        if (startBtn.style.display === 'none') {
-            startBtn.style.display = 'block';
-            startBtn.innerText = t('scanner_panel.next_button');
+        if (startBtn.style.display !== 'none') {
+            startBtn.innerText = t('scan_start_btn');
         }
     }, 100);
 });
 
-// Debug toggle
-toggleDebug.addEventListener('change', () => {
-    debugConsole.style.display = toggleDebug.checked ? 'block' : 'none';
-});
+saveBtn.addEventListener('click', handleSave);
+cancelBtn.addEventListener('click', handleCancel);
 
 // Language selector
-document.querySelectorAll('.lang-btn').forEach(btn => {
+const langToggleBtn = document.getElementById('lang-toggle-btn');
+const langPanel = document.getElementById('lang-panel');
+
+if (langToggleBtn && langPanel) {
+    langToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        langPanel.classList.toggle('show');
+    });
+    
+    document.addEventListener('click', (e) => {
+        if (!langToggleBtn.contains(e.target) && !langPanel.contains(e.target)) {
+            langPanel.classList.remove('show');
+        }
+    });
+}
+
+document.querySelectorAll('.lang-option').forEach(btn => {
     btn.addEventListener('click', async () => {
         const lang = btn.getAttribute('data-lang');
         await i18n.setLanguage(lang);
-        updateUILanguage();
+        i18n.updateDOM();
         
-        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.lang-option').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
         updateScanCount();
+        if (startBtn && startBtn.style.display !== 'none') {
+            startBtn.innerText = t('scan_start_btn');
+        }
+        langPanel.classList.remove('show');
     });
 });
 
-/**
- * Initialize app with token validation
- */
+function updateUILanguage() {
+    i18n.updateDOM();
+    if (appState.scanCount > 0) {
+        scanCountSpan.innerText = t('result_scan_count', { count: appState.scanCount });
+    }
+    if (startBtn && startBtn.style.display !== 'none') {
+        startBtn.innerText = t('scan_start_btn');
+    }
+}
+
+// Initialize app
 async function initializeApp() {
-    log("Initializing application...");
+    log("Initializing Ventura Scan...");
     
-    // Check saved session
     const savedAuth = localStorage.getItem('scan_auth');
     
     if (savedAuth) {
         try {
             const { deviceId, token } = JSON.parse(savedAuth);
-            
             log("Found saved session for device: " + deviceId);
             
-            // Verify token with server
             const isValid = await verifyToken(deviceId, token);
             
             if (isValid) {
-                // Token is valid, restore session
                 appState.deviceId = deviceId;
                 appState.token = token;
                 appState.authenticated = true;
                 appState.scanCount = 0;
-                
-                log("✅ Session restored and verified: " + deviceId);
+                log("✅ Session restored");
                 showMainScannerUI();
             } else {
-                // Token is invalid, clear and show activation
-                log("❌ Saved session is invalid", true);
+                log("❌ Invalid session", true);
                 clearAuthAndShowActivation();
             }
         } catch (err) {
-            log("❌ Session read error: " + err, true);
+            log("Session error: " + err, true);
             clearAuthAndShowActivation();
         }
     } else {
-        log("No saved session found");
+        log("No saved session");
         showActivationUI();
     }
 }
 
-// Initialize i18n and app
+// Start app
 window.onload = async () => {
-    // Initialize i18n first
     await i18n.init();
     updateUILanguage();
     
-    // Set active language button
     const currentLang = i18n.getCurrentLanguage();
-    document.querySelectorAll('.lang-btn').forEach(btn => {
+    document.querySelectorAll('.lang-option').forEach(btn => {
         if (btn.getAttribute('data-lang') === currentLang) {
             btn.classList.add('active');
         }
     });
     
-    // Check library
     if (typeof Html5Qrcode !== 'undefined') {
-        log("✅ Library loaded successfully");
+        log("✅ QR library loaded");
     } else {
-        log("❌ Failed to load library!", true);
-        protocolStatus.innerText = "Scanner load error";
-        protocolStatus.style.color = "red";
-        return;
+        log("❌ Library load failed!", true);
     }
     
-    // Initialize app with token validation
     await initializeApp();
 };

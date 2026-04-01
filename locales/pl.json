@@ -1,35 +1,31 @@
 {
-    "app_title": "Skaner kodów QR — Bezpieczny i niezawodny",
-    "scan_title": "Skaner kodów QR",
-    "security_check": "Sprawdzanie bezpieczeństwa połączenia...",
-    "connection_secure": "✅ Połączenie jest bezpieczne",
-    "connection_insecure": "❌ Wymagane połączenie HTTPS",
+    "app_title": "Venture Industries Group",
+    "header_subtitle": "Logistyczny skaner kodów QR",
     
-    "activation_panel_info_text": "Zeskanuj kod QR ze swojej karty serwisowej, aby aktywować urządzenie.",
-    "activation_panel_activate_button": "Aktywuj urządzenie",
+    "activation_title": "Proces rejestracji urządzenia:",
+    "activation_desc": "Naciśnij przycisk <Zarejestruj urządzenie> i w otwartym oknie zeskanuj kod QR ze swojego formularza służbowego.",
+    "activation_btn": "<Zarejestruj urządzenie>",
     
-    "scanner_panel_start_button": "Rozpocznij skanowanie",
-    "scanner_panel_scanning_button": "Skanowanie... (kamera aktywna)",
-    "scanner_panel_next_button": "Skanuj następny kod",
+    "scan_start_btn": "<Rozpocznij skanowanie>",
+    "scan_next_btn": "Skanuj następny kod",
+    "scanning_btn": "Skanowanie...",
     
-    "result_last_scanned": "Ostatni zeskanowany kod:",
-    "result_scan_count": "Zeskanowano ogółem: {{count}}",
+    "scanned_code_label": "ZESKANOWANY KOD",
+    "save_btn": "✓ <Zapisz kod>",
+    "cancel_btn": "✗ <Anuluj>",
+    "saving_btn": "Zapisywanie...",
+    "saved_btn": "Zapisano!",
     
-    "debug_show_logs": "Pokaż logi systemowe",
-    "debug_hide_logs": "Ukryj logi systemowe",
-    "debug_system_log": "--- LOG SYSTEMOWY ---<br>",
+    "result_scan_count": "Zeskanowano łącznie: {{count}}",
     
-    "lang_pl": "Polski",
-    "lang_en": "Angielski",
-    "lang_ru": "Rosyjski",
+    "connection_secure": "Bezpieczne połączenie",
+    "debug_show": "Informacje o systemie",
     
-    "errors_no_camera_access": "Brak dostępu do kamery. Sprawdź ustawienia przeglądarki.",
-    "errors_camera_error": "Błąd dostępu do kamery: {{error}}",
-    "errors_activation_error": "Błąd aktywacji: {{error}}",
-    "errors_session_expired": "Sesja wygasła. Aktywuj urządzenie ponownie.",
-    "errors_scan_error": "Błąd: {{error}}",
+    "errors_no_camera_access": "Wymagany dostęp do kamery. Zezwól na dostęp w ustawieniach przeglądarki.",
+    "errors_camera_error": "Błąd kamery: {{error}}",
+    "errors_activation_error": "Błąd rejestracji: {{error}}",
+    "errors_session_expired": "Sesja wygasła. Zarejestruj urządzenie ponownie.",
+    "errors_save_error": "Nie udało się zapisać kodu. Spróbuj ponownie.",
     
-    "messages_activation_success": "Aktywacja udana! Możesz teraz skanować kody.",
-    "messages_device_ready": "Urządzenie gotowe do skanowania",
-    "messages_scan_waiting": "Oczekiwanie na kod QR..."
+    "messages_activation_success": "Urządzenie zostało pomyślnie zarejestrowane! Możesz teraz rozpocząć skanowanie."
 }

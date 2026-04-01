@@ -1,36 +1,31 @@
 {
-    "app_title": "Сканер QR-кодів — Безпечно та надійно",
-    "scan_title": "Сканер QR-кодів",
-    "security_check": "Перевірка безпеки з'єднання...",
-    "connection_secure": "✅ З'єднання безпечне",
-    "connection_insecure": "❌ Потрібне HTTPS з'єднання",
+    "app_title": "Venture Industries Group",
+    "header_subtitle": "Логістичний сканер QR-кодів",
     
-    "activation_panel_info_text": "Відскануйте QR-код з вашого службового листка для активації пристрою.",
-    "activation_panel_activate_button": "Активувати пристрій",
+    "activation_title": "Процес реєстрації пристрою:",
+    "activation_desc": "Натисніть кнопку <Зареєструвати пристрій> та у відкритому вікні відскануйте QR-код з вашого службового листка.",
+    "activation_btn": "<Зареєструвати пристрій>",
     
-    "scanner_panel_start_button": "Почати сканування",
-    "scanner_panel_scanning_button": "Сканування... (камера активна)",
-    "scanner_panel_next_button": "Сканувати наступний код",
+    "scan_start_btn": "<Розпочати сканування>",
+    "scan_next_btn": "Сканувати наступний код",
+    "scanning_btn": "Сканування...",
     
-    "result_last_scanned": "Останній відсканований код:",
+    "scanned_code_label": "ВІДСКАНОВАНИЙ КОД",
+    "save_btn": "✓ <Зберегти код>",
+    "cancel_btn": "✗ <Скасувати>",
+    "saving_btn": "Збереження...",
+    "saved_btn": "Збережено!",
+    
     "result_scan_count": "Всього відскановано: {{count}}",
     
-    "debug_show_logs": "Показати логи системи",
-    "debug_hide_logs": "Приховати логи системи",
-    "debug_system_log": "--- ЛОГ СИСТЕМИ ---<br>",
+    "connection_secure": "Захищене з'єднання",
+    "debug_show": "Інформація про систему",
     
-    "lang_pl": "Polski",
-    "lang_en": "English",
-    "lang_ru": "Русский",
-    "lang_uk": "Українська",
+    "errors_no_camera_access": "Потрібен доступ до камери. Будь ласка, дозвольте доступ у налаштуваннях браузера.",
+    "errors_camera_error": "Помилка камери: {{error}}",
+    "errors_activation_error": "Помилка реєстрації: {{error}}",
+    "errors_session_expired": "Сесія закінчилася. Будь ласка, зареєструйте пристрій повторно.",
+    "errors_save_error": "Не вдалося зберегти код. Спробуйте ще раз.",
     
-    "errors_no_camera_access": "Немає доступу до камери. Перевірте налаштування браузера.",
-    "errors_camera_error": "Помилка доступу до камери: {{error}}",
-    "errors_activation_error": "Помилка активації: {{error}}",
-    "errors_session_expired": "Ваша сесія закінчилася. Будь ласка, активуйте пристрій знову.",
-    "errors_scan_error": "Помилка: {{error}}",
-    
-    "messages_activation_success": "Активація успішна! Тепер ви можете сканувати коди.",
-    "messages_device_ready": "Пристрій готовий до сканування",
-    "messages_scan_waiting": "Очікування QR-коду..."
+    "messages_activation_success": "Пристрій успішно зареєстровано! Тепер ви можете розпочати сканування."
 }

@@ -1,35 +1,31 @@
 {
-    "app_title": "QR Code Scanner — Secure and Reliable",
-    "scan_title": "QR Code Scanner",
-    "security_check": "Checking connection security...",
-    "connection_secure": "✅ Connection is secure",
-    "connection_insecure": "❌ HTTPS connection required",
+    "app_title": "Venture Industries Group",
+    "header_subtitle": "Logistics QR-code scanner",
     
-    "activation_panel_info_text": "Scan the QR code from your service sheet to activate the device.",
-    "activation_panel_activate_button": "Activate device",
+    "activation_title": "Device registration process:",
+    "activation_desc": "Click the <Register Device> button and scan the QR-code from your service sheet in the window that opens.",
+    "activation_btn": "<Register Device>",
     
-    "scanner_panel_start_button": "Start scanning",
-    "scanner_panel_scanning_button": "Scanning... (camera active)",
-    "scanner_panel_next_button": "Scan next code",
+    "scan_start_btn": "<Start Scanning>",
+    "scan_next_btn": "Scan Next Code",
+    "scanning_btn": "Scanning...",
     
-    "result_last_scanned": "Last scanned code:",
+    "scanned_code_label": "SCANNED CODE",
+    "save_btn": "✓ <Save Code>",
+    "cancel_btn": "✗ <Cancel>",
+    "saving_btn": "Saving...",
+    "saved_btn": "Saved!",
+    
     "result_scan_count": "Total scanned: {{count}}",
     
-    "debug_show_logs": "Show system logs",
-    "debug_hide_logs": "Hide system logs",
-    "debug_system_log": "--- SYSTEM LOG ---<br>",
+    "connection_secure": "Secure connection",
+    "debug_show": "System Info",
     
-    "lang_pl": "Polski",
-    "lang_en": "English",
-    "lang_ru": "Russian",
+    "errors_no_camera_access": "Camera access required. Please allow camera access in your browser settings.",
+    "errors_camera_error": "Camera error: {{error}}",
+    "errors_activation_error": "Registration failed: {{error}}",
+    "errors_session_expired": "Session expired. Please register the device again.",
+    "errors_save_error": "Failed to save code. Please try again.",
     
-    "errors_no_camera_access": "No camera access. Please check your browser settings.",
-    "errors_camera_error": "Camera access error: {{error}}",
-    "errors_activation_error": "Activation error: {{error}}",
-    "errors_session_expired": "Your session has expired. Please activate the device again.",
-    "errors_scan_error": "Error: {{error}}",
-    
-    "messages_activation_success": "Activation successful! You can now scan codes.",
-    "messages_device_ready": "Device ready for scanning",
-    "messages_scan_waiting": "Waiting for QR code..."
+    "messages_activation_success": "Device registered successfully! You can now start scanning."
 }

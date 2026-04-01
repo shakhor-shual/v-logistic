@@ -1,35 +1,31 @@
 {
-    "app_title": "Сканер кодов QR — Безопасно и надёжно",
-    "scan_title": "Сканер кодов QR",
-    "security_check": "Проверка безопасности соединения...",
-    "connection_secure": "✅ Соединение безопасно",
-    "connection_insecure": "❌ Требуется HTTPS соединение",
+    "app_title": "Venture Industries Group",
+    "header_subtitle": "Сканер логистических QR-кодов",
     
-    "activation_panel_info_text": "Сканируйте QR-код с вашего служебного листка для активации устройства.",
-    "activation_panel_activate_button": "Активировать устройство",
+    "activation_title": "Процесс регистрации устройства:",
+    "activation_desc": "Нажмите кнопку <Зарегистрировать устройство> и в открышемся окне отсканируйте QR-код из вашего служебного листка",
+    "activation_btn": "<Зарегистрировать устройство>",
     
-    "scanner_panel_start_button": "Начать сканирование",
-    "scanner_panel_scanning_button": "Сканирование... (камера активна)",
-    "scanner_panel_next_button": "Сканировать следующий код",
+    "scan_start_btn": "<Начать сканирование>",
+    "scan_next_btn": "Сканировать следующий код",
+    "scanning_btn": "Сканирование...",
     
-    "result_last_scanned": "Последний сканированный код:",
+    "scanned_code_label": "ОТСКАНИРОВАННЫЙ КОД",
+    "save_btn": "✓ <Сохранить Код>",
+    "cancel_btn": "✗ <Отмена>",
+    "saving_btn": "Сохранение...",
+    "saved_btn": "Сохранено!",
+    
     "result_scan_count": "Всего отсканировано: {{count}}",
     
-    "debug_show_logs": "Показать логи системы",
-    "debug_hide_logs": "Скрыть логи системы",
-    "debug_system_log": "--- ЛОГ СИСТЕМЫ ---<br>",
+    "connection_secure": "Защищенное соединение",
+    "debug_show": "Информация о системе",
     
-    "lang_pl": "Polski",
-    "lang_en": "English",
-    "lang_ru": "Русский",
+    "errors_no_camera_access": "Требуется доступ к камере. Разрешите доступ в настройках браузера.",
+    "errors_camera_error": "Ошибка камеры: {{error}}",
+    "errors_activation_error": "Ошибка регистрации: {{error}}",
+    "errors_session_expired": "Сессия истекла. Пожалуйста, зарегистрируйте устройство заново.",
+    "errors_save_error": "Не удалось сохранить код. Попробуйте еще раз.",
     
-    "errors_no_camera_access": "Нет доступа к камере. Проверьте настройки браузера.",
-    "errors_camera_error": "Ошибка доступа к камере: {{error}}",
-    "errors_activation_error": "Ошибка активации: {{error}}",
-    "errors_session_expired": "Ваша сессия истекла. Пожалуйста, активируйте устройство заново.",
-    "errors_scan_error": "Ошибка: {{error}}",
-    
-    "messages_activation_success": "Активация успешна! Теперь вы можете сканировать коды.",
-    "messages_device_ready": "Устройство готово к сканированию",
-    "messages_scan_waiting": "Ожидание QR-кода..."
+    "messages_activation_success": "Устройство успешно зарегистрировано! Теперь вы можете сканировать коды."
 }
