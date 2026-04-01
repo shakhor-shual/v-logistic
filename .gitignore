@@ -1,0 +1,17 @@
+# Специфические файлы учетных данных (по вашему запросу)
+credentials*.json
+
+# VS Code
+.vscode/
+*.code-workspace
+
+
+# PHP (Composer & common)
+vendor/
+.phpunit.result.cache
+composer.phar
+.php_cs.cache
+
+# Системные файлы
+.DS_Store
+Thumbs.db

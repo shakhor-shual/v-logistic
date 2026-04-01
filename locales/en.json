@@ -1,0 +1,35 @@
+{
+    "app_title": "QR Code Scanner — Secure and Reliable",
+    "scan_title": "QR Code Scanner",
+    "security_check": "Checking connection security...",
+    "connection_secure": "✅ Connection is secure",
+    "connection_insecure": "❌ HTTPS connection required",
+    
+    "activation_panel_info_text": "Scan the QR code from your service sheet to activate the device.",
+    "activation_panel_activate_button": "Activate device",
+    
+    "scanner_panel_start_button": "Start scanning",
+    "scanner_panel_scanning_button": "Scanning... (camera active)",
+    "scanner_panel_next_button": "Scan next code",
+    
+    "result_last_scanned": "Last scanned code:",
+    "result_scan_count": "Total scanned: {{count}}",
+    
+    "debug_show_logs": "Show system logs",
+    "debug_hide_logs": "Hide system logs",
+    "debug_system_log": "--- SYSTEM LOG ---<br>",
+    
+    "lang_pl": "Polski",
+    "lang_en": "English",
+    "lang_ru": "Russian",
+    
+    "errors_no_camera_access": "No camera access. Please check your browser settings.",
+    "errors_camera_error": "Camera access error: {{error}}",
+    "errors_activation_error": "Activation error: {{error}}",
+    "errors_session_expired": "Your session has expired. Please activate the device again.",
+    "errors_scan_error": "Error: {{error}}",
+    
+    "messages_activation_success": "Activation successful! You can now scan codes.",
+    "messages_device_ready": "Device ready for scanning",
+    "messages_scan_waiting": "Waiting for QR code..."
+}

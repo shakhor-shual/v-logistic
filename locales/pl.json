@@ -1,0 +1,35 @@
+{
+    "app_title": "Skaner kodów QR — Bezpieczny i niezawodny",
+    "scan_title": "Skaner kodów QR",
+    "security_check": "Sprawdzanie bezpieczeństwa połączenia...",
+    "connection_secure": "✅ Połączenie jest bezpieczne",
+    "connection_insecure": "❌ Wymagane połączenie HTTPS",
+    
+    "activation_panel_info_text": "Zeskanuj kod QR ze swojej karty serwisowej, aby aktywować urządzenie.",
+    "activation_panel_activate_button": "Aktywuj urządzenie",
+    
+    "scanner_panel_start_button": "Rozpocznij skanowanie",
+    "scanner_panel_scanning_button": "Skanowanie... (kamera aktywna)",
+    "scanner_panel_next_button": "Skanuj następny kod",
+    
+    "result_last_scanned": "Ostatni zeskanowany kod:",
+    "result_scan_count": "Zeskanowano ogółem: {{count}}",
+    
+    "debug_show_logs": "Pokaż logi systemowe",
+    "debug_hide_logs": "Ukryj logi systemowe",
+    "debug_system_log": "--- LOG SYSTEMOWY ---<br>",
+    
+    "lang_pl": "Polski",
+    "lang_en": "Angielski",
+    "lang_ru": "Rosyjski",
+    
+    "errors_no_camera_access": "Brak dostępu do kamery. Sprawdź ustawienia przeglądarki.",
+    "errors_camera_error": "Błąd dostępu do kamery: {{error}}",
+    "errors_activation_error": "Błąd aktywacji: {{error}}",
+    "errors_session_expired": "Sesja wygasła. Aktywuj urządzenie ponownie.",
+    "errors_scan_error": "Błąd: {{error}}",
+    
+    "messages_activation_success": "Aktywacja udana! Możesz teraz skanować kody.",
+    "messages_device_ready": "Urządzenie gotowe do skanowania",
+    "messages_scan_waiting": "Oczekiwanie na kod QR..."
+}

@@ -1,0 +1,36 @@
+{
+    "app_title": "Сканер QR-кодів — Безпечно та надійно",
+    "scan_title": "Сканер QR-кодів",
+    "security_check": "Перевірка безпеки з'єднання...",
+    "connection_secure": "✅ З'єднання безпечне",
+    "connection_insecure": "❌ Потрібне HTTPS з'єднання",
+    
+    "activation_panel_info_text": "Відскануйте QR-код з вашого службового листка для активації пристрою.",
+    "activation_panel_activate_button": "Активувати пристрій",
+    
+    "scanner_panel_start_button": "Почати сканування",
+    "scanner_panel_scanning_button": "Сканування... (камера активна)",
+    "scanner_panel_next_button": "Сканувати наступний код",
+    
+    "result_last_scanned": "Останній відсканований код:",
+    "result_scan_count": "Всього відскановано: {{count}}",
+    
+    "debug_show_logs": "Показати логи системи",
+    "debug_hide_logs": "Приховати логи системи",
+    "debug_system_log": "--- ЛОГ СИСТЕМИ ---<br>",
+    
+    "lang_pl": "Polski",
+    "lang_en": "English",
+    "lang_ru": "Русский",
+    "lang_uk": "Українська",
+    
+    "errors_no_camera_access": "Немає доступу до камери. Перевірте налаштування браузера.",
+    "errors_camera_error": "Помилка доступу до камери: {{error}}",
+    "errors_activation_error": "Помилка активації: {{error}}",
+    "errors_session_expired": "Ваша сесія закінчилася. Будь ласка, активуйте пристрій знову.",
+    "errors_scan_error": "Помилка: {{error}}",
+    
+    "messages_activation_success": "Активація успішна! Тепер ви можете сканувати коди.",
+    "messages_device_ready": "Пристрій готовий до сканування",
+    "messages_scan_waiting": "Очікування QR-коду..."
+}

@@ -1,0 +1,35 @@
+{
+    "app_title": "Сканер кодов QR — Безопасно и надёжно",
+    "scan_title": "Сканер кодов QR",
+    "security_check": "Проверка безопасности соединения...",
+    "connection_secure": "✅ Соединение безопасно",
+    "connection_insecure": "❌ Требуется HTTPS соединение",
+    
+    "activation_panel_info_text": "Сканируйте QR-код с вашего служебного листка для активации устройства.",
+    "activation_panel_activate_button": "Активировать устройство",
+    
+    "scanner_panel_start_button": "Начать сканирование",
+    "scanner_panel_scanning_button": "Сканирование... (камера активна)",
+    "scanner_panel_next_button": "Сканировать следующий код",
+    
+    "result_last_scanned": "Последний сканированный код:",
+    "result_scan_count": "Всего отсканировано: {{count}}",
+    
+    "debug_show_logs": "Показать логи системы",
+    "debug_hide_logs": "Скрыть логи системы",
+    "debug_system_log": "--- ЛОГ СИСТЕМЫ ---<br>",
+    
+    "lang_pl": "Polski",
+    "lang_en": "English",
+    "lang_ru": "Русский",
+    
+    "errors_no_camera_access": "Нет доступа к камере. Проверьте настройки браузера.",
+    "errors_camera_error": "Ошибка доступа к камере: {{error}}",
+    "errors_activation_error": "Ошибка активации: {{error}}",
+    "errors_session_expired": "Ваша сессия истекла. Пожалуйста, активируйте устройство заново.",
+    "errors_scan_error": "Ошибка: {{error}}",
+    
+    "messages_activation_success": "Активация успешна! Теперь вы можете сканировать коды.",
+    "messages_device_ready": "Устройство готово к сканированию",
+    "messages_scan_waiting": "Ожидание QR-кода..."
+}
