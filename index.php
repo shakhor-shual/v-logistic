@@ -6,6 +6,14 @@
     <meta name="description" data-i18n="app_title">
     <title>Ventura Scan - Logistics Scanner</title>
     
+        <!-- PWA метатеги -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#005f8c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ventura Scan">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     
     <style>
@@ -350,6 +358,43 @@ $appJsTime = filemtime('js/app.js');
 
 <script src="js/i18n.js?v=<?php echo $i18nJsTime; ?>"></script>
 <script src="js/app.js?v=<?php echo $appJsTime; ?>"></script>
+<script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                    console.log('Service Worker registered:', registration.scope);
+                }).catch(function(error) {
+                    console.log('Service Worker registration failed:', error);
+                });
+            });
+        }
+        
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log('Можно установить приложение');
+            
+            // Показываем кнопку установки
+            const mainPanel = document.getElementById('main-panel');
+            if (mainPanel && !document.getElementById('install-btn')) {
+                const installBtn = document.createElement('button');
+                installBtn.id = 'install-btn';
+                installBtn.className = 'btn btn-secondary';
+                installBtn.style.marginTop = '12px';
+                installBtn.textContent = '📱 Install App';
+                installBtn.onclick = async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        deferredPrompt = null;
+                        installBtn.style.display = 'none';
+                    }
+                };
+                mainPanel.appendChild(installBtn);
+            }
+        });
+    </script>
 
 </body>
 </html>
