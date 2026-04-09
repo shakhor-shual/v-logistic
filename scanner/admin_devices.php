@@ -13,7 +13,7 @@ $tempQR = generateQRCodeBase64($tempCode);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administracja skanerami - Zarządzanie urządzeniami</title>
-    <link rel="stylesheet" href="assets/css/admin-style-corporate.css">
+    <link rel="stylesheet" href="assets/css/admin-style.css">
 </head>
 <body>
     <div class="container">

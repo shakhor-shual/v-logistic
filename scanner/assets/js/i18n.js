@@ -23,7 +23,7 @@ class I18n {
     async loadLanguage(lang) {
         try {
             const timestamp = Date.now();
-            const response = await fetch(`locales/${lang}.json?v=${timestamp}`);
+            const response = await fetch(`scanner/assets/locales/${lang}.json?v=${timestamp}`);
             if (!response.ok) throw new Error(`Failed to load ${lang}`);
             this.translations[lang] = await response.json();
             this.currentLang = lang;

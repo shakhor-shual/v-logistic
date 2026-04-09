@@ -352,12 +352,12 @@
 </div>
 
 <?php
-$i18nJsTime = filemtime('js/i18n.js');
-$appJsTime = filemtime('js/app.js');
+$i18nJsTime = filemtime('scanner/assets/js/i18n.js');
+$appJsTime = filemtime('scanner/assets/js/app.js');
 ?>
 
-<script src="js/i18n.js?v=<?php echo $i18nJsTime; ?>"></script>
-<script src="js/app.js?v=<?php echo $appJsTime; ?>"></script>
+<script src="scanner/assets/js/i18n.js?v=<?php echo $i18nJsTime; ?>"></script>
+<script src="scanner/assets/js/app.js?v=<?php echo $appJsTime; ?>"></script>
 <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
