@@ -3,20 +3,26 @@
 require_once __DIR__ . '/config/database.php';
 
 header('Content-Type: application/json');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-$nrPracownika = isset($_POST['nr_pracownika']) ? $_POST['nr_pracownika'] : '';
-$kodUrzadzenia = isset($_POST['kod']) ? $_POST['kod'] : '';
+$nrPracownika = isset($_POST['nr_pracownika']) ? trim($_POST['nr_pracownika']) : '';
+$kodUrzadzenia = isset($_POST['kod']) ? trim($_POST['kod']) : '';
 
 if (empty($nrPracownika) && empty($kodUrzadzenia)) {
-    echo json_encode(['success' => false, 'message' => 'Brak danych']);
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Brak danych',
+        'debug' => ['nr' => $nrPracownika, 'kod' => $kodUrzadzenia]
+    ]);
     exit;
 }
 
 try {
-    // Ищем устройство по номеру сотрудника или коду
-    if ($nrPracownika) {
+    // Ищем устройство
+    if (!empty($nrPracownika)) {
         $device = fetchOne(
-            "SELECT KOD_REJ_URZ, TOKEN_DOSTEP_URZ, CZAS_UTW, OST_AKTYWNOSC 
+            "SELECT KOD_REJ_URZ, TOKEN_DOSTEP_URZ, CZAS_UTW, OST_AKTYWNOSC, NR_PRACOWNIKA 
              FROM ListaSkanerow 
              WHERE NR_PRACOWNIKA = ?",
             [$nrPracownika]
@@ -30,14 +36,22 @@ try {
         );
     }
     
+    // Логируем результат для отладки
+    error_log("Device status check - NR: $nrPracownika, Found: " . ($device ? 'YES' : 'NO'));
+    if ($device) {
+        error_log("Token value: " . ($device['TOKEN_DOSTEP_URZ'] ?? 'NULL'));
+    }
+    
     if ($device) {
         // Определяем статус
-        if ($device['TOKEN_DOSTEP_URZ'] === 'disabled') {
+        $token = $device['TOKEN_DOSTEP_URZ'];
+        
+        if ($token === 'disabled') {
             $status = 'disabled';
             $statusText = 'Zablokowany';
             $statusIcon = '🔴';
             $statusClass = 'status-disabled';
-        } elseif ($device['TOKEN_DOSTEP_URZ'] !== null && strlen($device['TOKEN_DOSTEP_URZ']) === 36) {
+        } elseif ($token !== null && strlen($token) == 36) {
             $status = 'active';
             $statusText = 'Aktywny';
             $statusIcon = '🟢';
@@ -49,7 +63,6 @@ try {
             $statusClass = 'status-pending';
         }
         
-        // Дополнительная информация
         $response = [
             'success' => true,
             'exists' => true,
@@ -58,12 +71,13 @@ try {
             'statusIcon' => $statusIcon,
             'statusClass' => $statusClass,
             'kod' => $device['KOD_REJ_URZ'],
-            'token' => $device['TOKEN_DOSTEP_URZ'],
+            'token' => $token,
             'czas_utw' => $device['CZAS_UTW'],
-            'ost_aktywnosc' => $device['OST_AKTYWNOSC']
+            'ost_aktywnosc' => $device['OST_AKTYWNOSC'],
+            'debug_token' => $token // Для отладки
         ];
         
-        // Если есть сотрудник, добавим его данные
+        // Добавляем информацию о сотруднике
         if ($device['NR_PRACOWNIKA']) {
             $pracownik = fetchOne(
                 "SELECT IMIE, NAZWISKO FROM Pracownicy WHERE NR_PRACOWNIKA = ?",
@@ -90,6 +104,6 @@ try {
     error_log("AJAX Get Status Error: " . $e->getMessage());
     echo json_encode([
         'success' => false,
-        'message' => 'Błąd sprawdzania statusu'
+        'message' => 'Błąd sprawdzania statusu: ' . $e->getMessage()
     ]);
 }
