@@ -112,28 +112,35 @@ if (!file_exists($qrDir)) {
 <?php
 // Генерируем указанное количество устройств
 for ($i = 0; $i < $n; $i++) {
-    // Генерируем уникальный код устройства
-    $code = 'DEV-' . substr(strtoupper(bin2hex(random_bytes(4))), 0, 4) . '-' . substr(strtoupper(bin2hex(random_bytes(4))), 0, 4);
+    // Генерируем уникальный код устройства в формате REG-XXXX
+    $code = 'REG-' . substr(strtoupper(bin2hex(random_bytes(3))), 0, 4);
     
     // Данные для QR-кода (можно изменить на URL)
     // $qrData = 'https://' . $_SERVER['HTTP_HOST'] . '/scanner/device.php?code=' . urlencode($code);
     $qrData = $code;
     
-    // Имя файла для QR-кода
-    $qrFilename = $qrDir . '/' . $code . '.png';
+    // Имя файла для QR-кода (заменяем возможные спецсимволы)
+    $safeFilename = preg_replace('/[^a-zA-Z0-9_-]/', '_', $code);
+    $qrFilename = $qrDir . '/' . $safeFilename . '.png';
     
     // Генерируем QR-код
     QRcode::png($qrData, $qrFilename, QR_ECLEVEL_L, 10, 2);
     
-    // Вставляем в базу данных используя функции из database.php
+    // Вставляем в базу данных используя новую структуру таблицы ListaSkanerow
     try {
-        // Проверяем существует ли устройство
-        $existing = fetchOne("SELECT id FROM devices WHERE device_code = ?", [$code]);
+        // Проверяем существует ли устройство по KOD_REJ_URZ
+        $existing = fetchOne("SELECT id FROM ListaSkanerow WHERE KOD_REJ_URZ = ?", [$code]);
         
         if (!$existing) {
             // Вставляем новое устройство
-            executeQuery("INSERT INTO devices (device_code, created_at) VALUES (?, NOW())", [$code]);
-            $status = '<div class="success">✓ Successfully added to the System</div>';
+            // TOKEN_DOSTEP_URZ оставляем NULL (неактивирован)
+            // NR_PRACOWNIKA по умолчанию '0000'
+            executeQuery(
+                "INSERT INTO ListaSkanerow (KOD_REJ_URZ, NR_PRACOWNIKA, TOKEN_DOSTEP_URZ, CZAS_UTW, OST_AKTYWNOSC) 
+                 VALUES (?, '0000', NULL, NOW(), NULL)",
+                [$code]
+            );
+            $status = '<div class="success">✓ Successfully added to the System (Not activated)</div>';
         } else {
             $status = '<div class="success" style="color: orange;">⚠ Already exists in the System</div>';
         }
@@ -146,7 +153,7 @@ for ($i = 0; $i < $n; $i++) {
     echo '
     <div class="device-card">
         <div class="qr-container">
-            <img src="qrcodes/' . $code . '.png" alt="QR Code for ' . htmlspecialchars($code) . '">
+            <img src="qrcodes/' . $safeFilename . '.png" alt="QR Code for ' . htmlspecialchars($code) . '">
         </div>
         <div class="device-code">' . htmlspecialchars($code) . '</div>
         ' . $status . '

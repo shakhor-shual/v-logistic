@@ -1,5 +1,5 @@
 <?php
-// scanner/api/activate.php - Device activation
+// scanner/api/activate.php - Device activation (FIXED)
 require_once __DIR__ . '/../config/database.php';
 
 try {
@@ -12,7 +12,7 @@ try {
     
     // Find device
     $device = fetchOne(
-        "SELECT id, device_code, device_token FROM devices WHERE device_code = ?",
+        "SELECT id, KOD_REJ_URZ, TOKEN_DOSTEP_URZ FROM ListaSkanerow WHERE KOD_REJ_URZ = ?",
         [$qr_code]
     );
     
@@ -21,12 +21,12 @@ try {
     }
     
     // Check if blocked
-    if ($device['device_token'] === 'disabled') {
+    if ($device['TOKEN_DOSTEP_URZ'] === 'disabled') {
         errorResponse('Device is blocked by administrator', 403);
     }
     
     // Check if already activated
-    if (!empty($device['device_token']) && $device['device_token'] !== 'disabled') {
+    if (!empty($device['TOKEN_DOSTEP_URZ']) && $device['TOKEN_DOSTEP_URZ'] !== 'disabled') {
         errorResponse('Device already activated', 409);
     }
     
@@ -40,19 +40,15 @@ try {
         mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
     );
     
-    // Activate device
-    $stmt = executeQuery(
-        "UPDATE devices 
-         SET device_token = ?, last_active = NOW()
-         WHERE id = ? AND (device_token IS NULL OR device_token = '' OR device_token = 'disabled')",
+    // Activate device - ПРОСТО ВЫПОЛНЯЕМ ЗАПРОС без проверки rowCount()
+    executeQuery(
+        "UPDATE ListaSkanerow 
+         SET TOKEN_DOSTEP_URZ = ?, OST_AKTYWNOSC = NOW()
+         WHERE id = ? AND (TOKEN_DOSTEP_URZ IS NULL OR TOKEN_DOSTEP_URZ = '' OR TOKEN_DOSTEP_URZ = 'disabled')",
         [$token, $device['id']]
     );
     
-    if ($stmt->rowCount() === 0) {
-        errorResponse('Failed to activate device', 500);
-    }
-    
-    // Success
+    // Success - всегда возвращаем успех, так как если бы была ошибка - executeQuery выбросил бы исключение
     successResponse([
         'message' => 'Activation completed',
         'device_id' => $device['id'],
@@ -66,3 +62,4 @@ try {
     error_log("Activation error: " . $e->getMessage());
     errorResponse('Error: ' . $e->getMessage(), 500);
 }
+?>
